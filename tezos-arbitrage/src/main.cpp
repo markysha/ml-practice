@@ -211,17 +211,6 @@ std::optional<Arbitrage> find_arbitrage(const DEX* dex_ptr, const CEX* cex_ptr, 
     return best_arbitrage;
 }
 
-struct GlobalStatistics {
-    uint64_t model_position_reopen_cnt = 0;
-    uint64_t trade_cnt = 0;
-    uint64_t matched_trade_cnt = 0;
-} global_statistics;
-
-class Model {
-public:
-
-};
-
 template<typename LineType>
 class CSVReader {
 public:
@@ -306,9 +295,11 @@ void calculate_profit() {
     CEX cex(0.1);
 
     Balance dex_balance;
-    dex_balance.tez = 15000;
+    dex_balance.tez = 1500;
     Balance cex_balance;
-    cex_balance.token = 1;
+    cex_balance.token = 5000;
+
+    int cnt_arbitrages = 0;
 
     auto cex_last_trade = cex_trades.get_next_line();
     do {
@@ -339,14 +330,8 @@ void calculate_profit() {
         if (cex_last_trade.time > dex_next_trade.time) {
             continue;
         }
-
-        ++global_statistics.trade_cnt;
-
         auto arbitrage_opt = find_arbitrage(&dex, &cex, &dex_balance, &cex_balance);
         if (!arbitrage_opt || arbitrage_opt->profit < 0.1) {
-            continue;
-        }
-        if (dex_next_trade.time < 1650359507) {
             continue;
         }
         if (arbitrage_opt->type == Arbitrage::ROUTE_TYPE::DEX_CEX) {
@@ -366,7 +351,7 @@ void calculate_profit() {
             dex_balance.token -= tokenAmount;
             dex_balance.tez += tezOutAmount;
         }
-        std::cerr << "found arbitrage: " << std::endl;
+        std::cerr << "found arbitrage: " << ++cnt_arbitrages << std::endl;
         std::cerr << "\t" << "time: " << dex_next_trade.time << std::endl;
         std::cerr << std::fixed << std::setprecision(4) << "\t" << "profit: " <<  arbitrage_opt->profit << " " << "amount: " << arbitrage_opt->amount << std::endl;
         std::cerr << "\t" << "tez balance    : " << dex_balance.tez + cex_balance.tez << std::endl;
