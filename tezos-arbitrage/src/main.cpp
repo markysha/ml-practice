@@ -244,10 +244,10 @@ private:
     LineType next_line;
 };
 
-CSVReader<DEXTrade> dex_trades("../tezos/XTZ_kUSD.csv");
-CSVReader<CEXTrade> cex_trades("../binance/trades/XTZUSDT.csv");
-//    CSVReader<DEXTrade> dex_trades("../tezos/XTZ_tzBTC.csv");
-//    CSVReader<CEXTrade> cex_trades("../binance/trades/XTZBTC.csv");
+//CSVReader<DEXTrade> dex_trades("../tezos/XTZ_kUSD.csv");
+//CSVReader<CEXTrade> cex_trades("../binance/trades/XTZUSDT.csv");
+    CSVReader<DEXTrade> dex_trades("../tezos/XTZ_tzBTC.csv");
+    CSVReader<CEXTrade> cex_trades("../binance/trades/XTZBTC.csv");
 
 void create_price_history() {
     DEX dex(0.3);
@@ -297,7 +297,7 @@ void calculate_profit() {
     Balance dex_balance;
     dex_balance.tez = 1500;
     Balance cex_balance;
-    cex_balance.token = 5000;
+    cex_balance.token = 0.1;
 
     int cnt_arbitrages = 0;
 
